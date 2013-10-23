@@ -1,0 +1,158 @@
+#!/bin/bash
+
+# Define version
+export VER="v2.0"
+export CALL="$(basename "$0")"
+
+# Define directories
+export DIR_BASE=$(dirname $(readlink -f $0))
+export DIR_CONF=$DIR_BASE/config
+export DIR_LIBS=$DIR_BASE/library
+export DIR_CMDS=$DIR_BASE/commands
+export DIR_STGS=$DIR_BASE/stages
+export DIR_HELP=$DIR_BASE/help
+export DIR_TRGT=$PWD
+export DIR_CODE=$DIR_TRGT/sources
+
+#@function aboriginal [command]
+#@ - execute an aboriginal command
+aboriginal() {
+  [ -n "$1" ] && [ ! -f "$DIR_CMDS/$1" ] && show_error "'$1' is not a valid command"
+
+  source_limit "$DIR_CMDS/$1" ${@:2}
+}
+
+#@function source_or_die [file or dir]
+#@ - source a file or directory or die if doesn't exist
+source_or_die() {
+  #[ ! -d "$@" ] && [ ! -f "$@" ] && echo "$@ not found" && exit 404
+
+  echo "source_or_die $@"
+
+  source_dir "$@"
+
+  STATUS=$?
+  #echo = source_or_die "$@ $STATUS"
+  return $STATUS
+}
+
+#@function source_quiet [file or dir]
+#@ - source a file or diecectory hide output
+source_quiet() {
+  source_dir "$1" ${@:2} 2>/dev/null 1>/dev/null
+
+  STATUS=$?
+  #echo = source_quiet "$@ $STATUS"
+}
+
+#@function source_limit [file or dir]
+#@ - source a file or diecectory while limitting output
+source_limit() {
+  local BUFFER_FILE="./source_limit_$RANDOM"
+
+  source_dir "$1" ${@:2} 2>&1 | sed -n -e 's/^=\+\s//p'
+
+  STATUS=${PIPESTATUS[0]}
+
+  #(source_dir "$1" ${@:2} && STATUS=$?) 2>&1 1>$BUFFER_FILE
+  #cat $BUFFER_FILE | sed -n -e 's/^=\+\s//p'
+  #rm $BUFFER_FILE
+
+  #echo "source_limit $@ $STATUS"
+  [ 0 != $STATUS ] && echo Error 1 in "$@" && exit $STATUS
+}
+
+#@function source_dir [file or dir]
+#@ - source a file or directory
+source_dir() {
+  #echo "= calling source_dir $@"
+  if [ -d "$1" ]; then
+    echo "Loading dir $1"
+
+    for x in $(ls "$1"); do
+      source_dir "$1/$x" ${@:2}
+      echo = source_dir "$1/$x $STATUS"
+    done
+  elif [ -f "$1" ]; then
+    echo "Loading file $1"
+
+    source "$1" ${@:2}
+
+    STATUS=$?
+    #echo = source "$@" $STATUS
+    [ 0 != $STATUS ] && echo Error 2 in "$1" && exit $STATUS
+  else
+    echo "File does not exist $1"
+  fi
+
+  return 0
+}
+
+#@function show_header
+#@ - show header block with copywrite info
+show_header() {
+  echo "
+  Aboriginal Linux $VER (c) Copyright $(date +%Y) - Rob Landley
+  Primitive Linux Emulation for Native Compilers on QEMU
+  MIT License - landly.net/aboriginal - IRC: #aboriginal
+  "
+}
+
+#@function show_usage [command file]
+#@ - show usage block for command file
+show_usage() {
+  show_header
+  show_just_usage "$1"
+}
+
+show_just_usage() {
+  if [ -n "$1" ]; then
+    echo "  Usage for $(basename $1):"
+    show_docs aboriginal "$CALL" "$1"
+    echo
+
+    $(declare -F list_$(basename $1))
+
+    if [ -f "$DIR_HELP/$(basename $1)" ]; then
+      echo "  See Also:"
+      echo
+      echo "    $CALL help $(basename $1)"
+      echo
+    fi
+
+    exit 0
+  fi
+
+  echo "  List Usage and Shortcuts:"
+  echo
+  echo "    $CALL list commands"
+  echo
+  echo "  Help and Tutorials:"
+  echo
+  echo "    $CALL help"
+  echo
+  exit 0
+}
+
+#@function show_docs [type] [files]
+#@ - show doc comments
+show_docs() {
+  find $3 -type f -exec sed -n -e "s/^#@$1/\n    $2/p" -e "s/^#@ - /\n       /p" {} \;
+}
+
+show_error() {
+  show_header
+  echo "    $1"
+  echo
+  show_just_usage
+  exit 1
+}
+
+# load functions
+source_quiet $DIR_LIBS
+
+# Check for arguments and show usage
+[ -z "$1" ] && show_usage
+
+# run command
+aboriginal $@

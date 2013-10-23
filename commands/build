@@ -1,0 +1,39 @@
+#!/bin/bash
+#@aboriginal build [target]
+#@ - Build a specific target using all stages
+#@aboriginal build [target] [stage]
+#@ - Build a specific stage for the specified target
+[ -z $VER ] && echo "$0 is a helper file" && exit 1
+[ "$1" = "$(basename $BASH_SOURCE)" ] && show_usage $BASH_SOURCE
+
+echo $BASH_SOURCE
+
+# set export variables
+export TARGET="$1"
+export STAGE="$2"
+
+# set local variables
+local _STAGES=($(ls $DIR_STGS/$([ -n "$STAGE" ] && echo $STAGE* $DIR_STGS/[0-9][0-9]-$STAGE*) 2>/dev/null))
+local _START=$(basename "${_STAGES[0]}")
+local _STARTED=0
+
+##echo === ${_STAGES[@]}
+
+# loop through stages only do from starting stage
+for FILE_STAGE in ${_STAGES[@]}; do
+  FILE_STAGE=$(basename $FILE_STAGE)
+
+  [ "$FILE_STAGE" = "$_START" ] && _STARTED=1
+
+  if [ $_STARTED = 1 ]; then
+    STAGE=${FILE_STAGE##[0-9][0-9]-}
+
+    echo = " "
+    echo -e === "\033[1maboriginal build $TARGET $FILE_STAGE\033[0m"
+    echo = " "
+
+    source_dir "$DIR_STGS/$FILE_STAGE"
+  fi
+done
+
+echo = " "

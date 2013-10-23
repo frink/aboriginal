@@ -1,0 +1,12 @@
+#!/bin/bash
+#@aboriginal help [topic]
+#@ - View help for specific topic
+[ -z $VER ] && echo "$0 is a helper file" && exit 1
+[ "$1" = "$(basename $BASH_SOURCE)" ] && show_usage $BASH_SOURCE
+
+echo "  Viewing help for '$1'"
+echo
+
+man $DIR_HELP/$1
+
+exit
