@@ -1,7 +1,8 @@
 #!/bin/bash
 [ -z $VER ] && echo "$0 is a helper file" && exit 1
 
-download_if_needed() {
+download_packages() {
+  [ -n "$FORK" ] && [ -n "$PACKAGES" ] && echo -ne "  \E[33mPackages ${PACKAGES[@]}\E[0m\n"
   [ -z "$URL" ] && return 0
 
   local FILENAME="$(basename $URL)"
@@ -9,11 +10,11 @@ download_if_needed() {
 
   download_checksum $FILEPATH $SHA1 && return 0
 
-  tput sc
-  echo -ne "  \E[33mDownloading $CONFIG from $URL\E[0m"
+  [ -z "$FORK" ] && tput sc
+  [ -z "$FORK" ] && echo -ne "  \E[33mDownloading $CONFIG from $URL\E[0m"
   wget  --quiet -t 2 -T 20 -O "$FILEPATH" "$URL" > /dev/null || (rm -f "$FILEPATH"; return 500)
-  tput rc
-  tput ed
+  [ -z "$FORK" ] && tput rc
+  [ -z "$FORK" ] && tput ed
 
   download_checksum $FILEPATH $SHA1 && return 0
 
@@ -37,4 +38,4 @@ download_checksum() {
   return 1
 }
 
-build_config download_if_needed
+build_config download_packages

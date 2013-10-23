@@ -30,9 +30,9 @@ source_or_die() {
 
   [ ! -d "$1" ] && [ ! -f "$1" ] && echo "$1 not found" && exit 404
 
-  source_dir "$1" ${@:2}
+  source_dir "$1" ${@:2} | cat
 
-  STATUS=$?
+  STATUS=${PIPESTATUS[0]}
   #echo = source_or_die "$@ $STATUS"
   return $STATUS
 }

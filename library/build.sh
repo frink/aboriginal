@@ -70,8 +70,3 @@ build_config() {
 
   return 0
 }
-
-check_build_stage_exclusion () {
-  local varname=$(basename $1)
-
-}
