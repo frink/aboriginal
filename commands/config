@@ -8,7 +8,7 @@
 #@aboriginal config [target] [package]
 #@ - Configure a specific package for a specific target
 [ -z $VER ] && echo "$0 is a helper file" && exit 1
-[ "$1" = "$(basename $BASH_SOURCE)" ] && show_usage $BASH_SOURCE
+[ "$1" = "$BASH_SOURCE" ] && show_usage $BASH_SOURCE
 [ -z "$EDITOR" ] && EDITOR=nano
 [ -n "$2" ] && [ -f "$DIR_CONF/$1/$2.conf" ] && $EDITOR "$DIR_CONF/$1/$2.conf" && exit
 [ -f "$DIR_CONF/$1.conf" ] && $EDITOR "$DIR_CONF/$1.conf" && exit

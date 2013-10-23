@@ -19,17 +19,17 @@ export DIR_CODE=$DIR_TRGT/sources
 aboriginal() {
   [ -n "$1" ] && [ ! -f "$DIR_CMDS/$1" ] && show_error "'$1' is not a valid command"
 
-  source_limit "$DIR_CMDS/$1" ${@:2}
+  source_dir "$DIR_CMDS/$1" ${@:2}
 }
 
 #@function source_or_die [file or dir]
 #@ - source a file or directory or die if doesn't exist
 source_or_die() {
-  #[ ! -d "$@" ] && [ ! -f "$@" ] && echo "$@ not found" && exit 404
+  #echo "source_or_die $@"
 
-  echo "source_or_die $@"
+  [ ! -d "$1" ] && [ ! -f "$1" ] && echo "$1 not found" && exit 404
 
-  source_dir "$@"
+  source_dir "$1" ${@:2}
 
   STATUS=$?
   #echo = source_or_die "$@ $STATUS"
@@ -48,7 +48,7 @@ source_quiet() {
 #@function source_limit [file or dir]
 #@ - source a file or diecectory while limitting output
 source_limit() {
-  local BUFFER_FILE="./source_limit_$RANDOM"
+  #local BUFFER_FILE="./source_limit_$RANDOM"
 
   source_dir "$1" ${@:2} 2>&1 | sed -n -e 's/^=\+\s//p'
 
@@ -59,6 +59,7 @@ source_limit() {
   #rm $BUFFER_FILE
 
   #echo "source_limit $@ $STATUS"
+
   [ 0 != $STATUS ] && echo Error 1 in "$@" && exit $STATUS
 }
 
@@ -67,14 +68,14 @@ source_limit() {
 source_dir() {
   #echo "= calling source_dir $@"
   if [ -d "$1" ]; then
-    echo "Loading dir $1"
+    #echo "Loading dir $1"
 
     for x in $(ls "$1"); do
       source_dir "$1/$x" ${@:2}
-      echo = source_dir "$1/$x $STATUS"
+      #echo = source_dir "$1/$x $STATUS"
     done
   elif [ -f "$1" ]; then
-    echo "Loading file $1"
+    #echo "Loading file $1"
 
     source "$1" ${@:2}
 
@@ -105,6 +106,8 @@ show_usage() {
   show_just_usage "$1"
 }
 
+#@function show_just_usage [command file]
+#@ - show only usage block for command file
 show_just_usage() {
   if [ -n "$1" ]; then
     echo "  Usage for $(basename $1):"
@@ -140,11 +143,13 @@ show_docs() {
   find $3 -type f -exec sed -n -e "s/^#@$1/\n    $2/p" -e "s/^#@ - /\n       /p" {} \;
 }
 
+#@function show_error [message] [command file]
+#@ - show error message
 show_error() {
   show_header
   echo "    $1"
   echo
-  show_just_usage
+  show_just_usage $2
   exit 1
 }
 

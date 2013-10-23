@@ -4,5 +4,5 @@
 #@aboriginal test [target] [test]
 #@ - Run the specified test against the specified target
 [ -z $VER ] && echo "$0 is a helper file" && exit 1
-[ "$1" = "$(basename $BASH_SOURCE)" ] && show_usage $BASH_SOURCE
+[ "$1" = "$BASH_SOURCE" ] && show_usage $BASH_SOURCE
 

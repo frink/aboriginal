@@ -2,5 +2,5 @@
 #@aboriginal iso [target] [image]
 #@ - Build an ISO image for specific target using the specified image file
 [ -z $VER ] && echo "$0 is a helper file" && exit 1
-[ "$1" = "$(basename $BASH_SOURCE)" ] && show_usage $BASH_SOURCE
+[ "$1" = "$BASH_SOURCE" ] && show_usage $BASH_SOURCE
 

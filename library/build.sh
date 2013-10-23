@@ -58,6 +58,8 @@ build_config() {
   export URL=""
   export SHA1=""
 
+  [ -z "$CONFIG" ] && CONFIG="build"
+
   source_quiet "$DIR_CONF/$CONFIG.conf"
   source_quiet "$DIR_CONF/$TARGET/$CONFIG.conf"
   fork_worker $FUNCTION $CONFIG
@@ -65,6 +67,8 @@ build_config() {
   while read x; do
     [ -n "$x" ] && build_config $1 "$x"
   done < <(echo ${PACKAGES[@]} | sed -e 's/\s/\n/g')
+
+  return 0
 }
 
 check_build_stage_exclusion () {

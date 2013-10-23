@@ -38,7 +38,7 @@ list_config() {
 #@ - list build configuration
 list_build() {
   list_targets
-  list_stage
+  list_stages
 }
 
 #@function list_targets
@@ -49,6 +49,13 @@ list_targets() {
   echo
 }
 
+#@function list_stage
+#@ - list stage configuration
+list_stage() {
+  list_stages
+  list_targets
+}
+
 #@function list_stages
 #@ - list of aboriginal build stages
 list_stages() {
@@ -56,10 +63,6 @@ list_stages() {
   echo
   ls $DIR_STGS | xargs -I {} echo "    {}"
   echo
-}
-
-list_stage() {
-  list_stages
 }
 
 #@function list_commands

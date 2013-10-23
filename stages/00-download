@@ -1,0 +1,14 @@
+#!/bin/bash
+[ -z $VER ] && echo "$0 is a helper file" && exit 1
+
+download_if_needed() {
+  [ -z "$URL" ] && return 0
+
+  echo "  Downloading $CONFIG - $URL"
+}
+
+check_sha1sum() {
+  echo asdf
+}
+
+build_config download_if_needed
