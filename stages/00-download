@@ -9,9 +9,11 @@ download_if_needed() {
 
   download_checksum $FILEPATH $SHA1 && return 0
 
+  tput sc
   echo -ne "  Downloading $CONFIG from $URL"
   wget  --quiet -t 2 -T 20 -O "$FILEPATH" "$URL" > /dev/null || (rm -f "$FILEPATH"; return 500)
-  echo -ne "\r"
+  tput rc
+  tput ed
 
   download_checksum $FILEPATH $SHA1 && return 0
 
