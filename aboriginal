@@ -13,6 +13,7 @@ export DIR_STGS=$DIR_BASE/stages
 export DIR_HELP=$DIR_BASE/help
 export DIR_TRGT=$PWD
 export DIR_CODE=$DIR_TRGT/sources
+export NO_HEADER=""
 
 #@function aboriginal [command]
 #@ - execute an aboriginal command
@@ -92,11 +93,12 @@ source_dir() {
 #@function show_header
 #@ - show header block with copywrite info
 show_header() {
-  echo "
+  [ -z "$NO_HEADER" ] && echo "
   Aboriginal Linux $VER (c) Copyright $(date +%Y) - Rob Landley
   Primitive Linux Emulation for Native Compilers on QEMU
   MIT License - landly.net/aboriginal - IRC: #aboriginal
   "
+  NO_HEADER=true
 }
 
 #@function show_usage [command file]

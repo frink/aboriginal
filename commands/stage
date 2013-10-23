@@ -14,7 +14,7 @@ local FILE_STAGE=$(basename "${_STAGES[0]}")
 [ -z "$FILE_STAGE" ] && show_error "'$1' is not a valid stage" $BASH_SOURCE
 [ -z "$TARGET" ] && show_error "'$2' is not a valid target" $BASH_SOURCE
 
-echo " "
+show_header
 echo -e "  \E[1maboriginal stage $FILE_STAGE $TARGET\E[0m"
 source_or_die "$DIR_STGS/$FILE_STAGE"
 echo " "

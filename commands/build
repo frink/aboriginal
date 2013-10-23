@@ -17,6 +17,8 @@ local _STAGES=($(ls $DIR_STGS/$([ -n "$STAGE" ] && echo $STAGE* $DIR_STGS/[0-9][
 local _START=$(basename "${_STAGES[0]}")
 local _STARTED=0
 
+show_header
+
 # loop through stages only do from starting stage
 for FILE_STAGE in $(ls $DIR_STGS); do
   [ "$FILE_STAGE" = "$_START" ] && _STARTED=1

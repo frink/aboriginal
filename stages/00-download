@@ -10,24 +10,27 @@ download_if_needed() {
   download_checksum $FILEPATH $SHA1 && return 0
 
   tput sc
-  echo -ne "  Downloading $CONFIG from $URL"
+  echo -ne "  \E[33mDownloading $CONFIG from $URL\E[0m"
   wget  --quiet -t 2 -T 20 -O "$FILEPATH" "$URL" > /dev/null || (rm -f "$FILEPATH"; return 500)
   tput rc
   tput ed
 
   download_checksum $FILEPATH $SHA1 && return 0
 
-  echo -ne "  FAILED VERIFICATION - $FILEPATH\n" && exit 1
+  echo -ne "  \E[1;31mFAILED VERIFICATION\E[0m - $FILEPATH\n" && exit 1
 }
 
 download_checksum() {
   [ ! -f "$1" ] && return 1
-  [ -z "$2" ] && echo -ne "  UNVERIFIED - $CONFIG\n" && return 0
-  [ -z "$(which sha1sum)" ] && show_error "  Install sha1sum to verify files" $BASH_SOURCE
 
-  SUM="$(sha1sum "$1"  2>/dev/null | sed 's/\s.*$//')"
+  local FILENAME="$(basename $1)"
 
-  [ x"$SUM" == x"$2" ] && echo -ne "  VERIFIED - $CONFIG\n" && return 0
+  [ -z "$2" ] && echo -ne "  \E[1;31mCHECKSUM UNAVAILABLE\E[0;34m - $FILENAME\E[0m\n" && return 0
+  [ -z "$(which sha1sum)" ] && echo -ne "  \E[1;31mCHECKSUM UNVERIFIED\E[0;34m - $FILENAME\E[0m - Install sha1sum to verify\n" $BASH_SOURCE
+
+  local SUM="$(sha1sum "$1"  2>/dev/null | sed 's/\s.*$//')"
+
+  [ x"$SUM" == x"$2" ] && echo -ne "  \E[1;32mDOWNLOAD VERIFIED\E[0;34m - $FILENAME\E[0m\n" && return 0
 
   rm -f $1
 
