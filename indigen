@@ -125,7 +125,7 @@ show_just_usage() {
     $(declare -F list_$(basename $1))
 
     if [ -f "$DIR_HELP/$(basename $1)" ]; then
-      echo "  See Also:"
+      echo -e "  \E[1mSee Also:\E[0m"
       echo
       echo "    $CALL help $(basename $1)"
       echo
@@ -148,7 +148,7 @@ show_just_usage() {
 #@function show_docs [type] [files]
 #@ - show doc comments
 show_docs() {
-  find $3 -type f -exec sed -n -e "s/^#@$1/\n    $2/p" -e "s/^#@ - /\n       /p" {} \;
+  find $3 -type f -exec sed -n -e "s/^#@$1/\n    $2/p" -e "s/^#@ - /    /p" {} \;
 }
 
 #@function show_error [message] [command file]

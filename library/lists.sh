@@ -44,7 +44,7 @@ list_build() {
 #@function list_targets
 #@ - list of build targets
 list_targets() {
-  echo "  Build Targets:"
+  echo -e "  \E[1mBuild Targets:\E[0m"
   find $DIR_CONF -type d|sed -e "s/^.\{${#DIR_CONF}\}/   /" -e 's/\// /g'|sort
   echo
 }
@@ -59,7 +59,7 @@ list_stage() {
 #@function list_stages
 #@ - list of indigen build stages
 list_stages() {
-  echo "  Build Stages:"
+  echo -e "  \E[1mBuild Stages:\E[0m"
   echo
   ls $DIR_STGS | xargs -I {} echo "    {}"
   echo
@@ -68,7 +68,7 @@ list_stages() {
 #@function list_commands
 #@ - list of indigen commands
 list_commands() {
-  echo "  Indigen Commands:"
+  echo -e "  \E[1mIndigen Commands:\E[0m"
   show_docs call $CALL "$DIR_CMDS/*"
   echo
 }
@@ -76,7 +76,7 @@ list_commands() {
 #@function list_functions
 #@ - list of indigen functions
 list_functions() {
-  echo "  Indigen Internal Functions:"
+  echo -e "  \E[1mInternal Functions:\E[0m"
   show_docs function "" "$CALL $DIR_LIBS/*"
   echo
 }
@@ -84,7 +84,7 @@ list_functions() {
 #@function list_packages
 #@ - list packages
 list_packages() {
-  echo "  Build Packages:"
+  echo -e "  \E[1mBuild Packages:\E[0m"
   echo
   find $DIR_CONF -type f -exec basename {} \; |sort -u|grep -v build|sed -e 's/\.conf//' -e 's/^/    /'
   echo
