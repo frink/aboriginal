@@ -95,9 +95,9 @@ source_dir() {
 #@ - show header block with copywrite info
 show_header() {
   [ -z "$NO_HEADER" ] && echo -e "
-  \E[1;34mIndigen Build Systems $VER\E[0;34m - © $YEAR FRINKnet and Lemurs
-  \E[34mlemurs.mit-license.org - www.indigen.co - IRC: #indigen\E[0m
-  \E[33mPrimitive Linux Emulations for Native Compilers on QEMU\E[0m
+  \E[1mIndigen Build Systems $VER\E[0m - © $YEAR FRINKnet and Lemurs
+  \E[0mlemurs.mit-license.org - www.indigen.co - IRC: #indigen\E[0m
+  \E[0mPrimitive Linux Emulations for Native Compilers on QEMU\E[0m
   "
 
   #Indigen Build System $VER Primitive Emulation for Native Compilers
@@ -118,9 +118,9 @@ show_usage() {
 #@ - show only usage block for command file
 show_just_usage() {
   if [ -n "$1" ]; then
-    echo "  Usage for $(basename $1):"
+    echo -e "  \E[1mUsage for $(basename $1):\E[0m"
     show_docs call "$CALL" "$1"
-    echo
+    echo -e "\E[0m"
 
     $(declare -F list_$(basename $1))
 
