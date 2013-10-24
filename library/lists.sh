@@ -2,7 +2,7 @@
 [ -z $VER ] && echo "$0 is a helper file" && exit 1
 
 #@function list_list
-#@ - list of aboriginal shortcuts types
+#@ - list of indigen shortcuts types
 list_list() {
   echo "  List Types:"
   echo
@@ -15,7 +15,7 @@ list_list() {
 }
 
 #@function list_help
-#@ - list of aboriginal help topics
+#@ - list of indigen help topics
 list_help() {
   echo "  Help Topics:"
   echo
@@ -57,7 +57,7 @@ list_stage() {
 }
 
 #@function list_stages
-#@ - list of aboriginal build stages
+#@ - list of indigen build stages
 list_stages() {
   echo "  Build Stages:"
   echo
@@ -66,17 +66,17 @@ list_stages() {
 }
 
 #@function list_commands
-#@ - list of aboriginal commands
+#@ - list of indigen commands
 list_commands() {
-  echo "  Aboriginal Commands:"
-  show_docs aboriginal $CALL "$DIR_CMDS/*"
+  echo "  Indigen Commands:"
+  show_docs call $CALL "$DIR_CMDS/*"
   echo
 }
 
 #@function list_functions
-#@ - list of aboriginal functions
+#@ - list of indigen functions
 list_functions() {
-  echo "  Aboriginal Internal Functions:"
+  echo "  Indigen Internal Functions:"
   show_docs function "" "$CALL $DIR_LIBS/*"
   echo
 }

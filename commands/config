@@ -1,11 +1,11 @@
 #!/bin/bash
-#@aboriginal config build
-#@ - Configure Aboriginal Linux
-#@aboriginal config [package]
+#@call config build
+#@ - Configure Indigen Build System
+#@call config [package]
 #@ - Configure a specific package
-#@aboriginal config [target]
+#@call config [target]
 #@ - Configure a specific target
-#@aboriginal config [target] [package]
+#@call config [target] [package]
 #@ - Configure a specific package for a specific target
 [ -z $VER ] && echo "$0 is a helper file" && exit 1
 [ "$1" = "$BASH_SOURCE" ] && show_usage $BASH_SOURCE

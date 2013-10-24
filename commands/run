@@ -1,7 +1,7 @@
 #!/bin/bash
-#@aboriginal run [target]
+#@call run [target]
 #@ - Boot the specified target with QEMU
-#@aboriginal run [target] [image]
+#@call run [target] [image]
 #@ - Boot the specified target with specified boot image
 [ -z $VER ] && echo "$0 is a helper file" && exit 1
 [ "$1" = "$BASH_SOURCE" ] && show_usage $BASH_SOURCE

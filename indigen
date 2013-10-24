@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # Define version
-export VER="v2.0"
+export VER="v1.6"
+export YEAR="2013"
 export CALL="$(basename "$0")"
 
 # Define directories
@@ -15,9 +16,9 @@ export DIR_TRGT=$PWD
 export DIR_CODE=$DIR_TRGT/sources
 export NO_HEADER=""
 
-#@function aboriginal [command]
-#@ - execute an aboriginal command
-aboriginal() {
+#@function indigen [command]
+#@ - execute an indigen command
+indigen() {
   [ -n "$1" ] && [ ! -f "$DIR_CMDS/$1" ] && show_error "'$1' is not a valid command"
 
   source_dir "$DIR_CMDS/$1" ${@:2}
@@ -94,10 +95,15 @@ source_dir() {
 #@ - show header block with copywrite info
 show_header() {
   [ -z "$NO_HEADER" ] && echo "
-  Aboriginal Linux $VER (c) Copyright $(date +%Y) - Rob Landley
-  Primitive Linux Emulation for Native Compilers on QEMU
-  MIT License - landly.net/aboriginal - IRC: #aboriginal
+  Indigen Build Systems $VER - © $YEAR FRINKnet and Lemurs
+  Primitive Linux Emulations for Native Compilers on QEMU
+  License: lemurs.mit-license.org - indigen.co - #indigen
   "
+
+  #Indigen Build System $VER Primitive Emulation for Native Compilers
+  #Copyright (c) 2013 - FRINKnet and the Expatriated Lemurs of Borneo
+  #MIT License: http://lemurs.mit-license.org - indigen.co - #indigen
+
   NO_HEADER=true
 }
 
@@ -113,7 +119,7 @@ show_usage() {
 show_just_usage() {
   if [ -n "$1" ]; then
     echo "  Usage for $(basename $1):"
-    show_docs aboriginal "$CALL" "$1"
+    show_docs call "$CALL" "$1"
     echo
 
     $(declare -F list_$(basename $1))
@@ -162,4 +168,4 @@ source_quiet $DIR_LIBS
 [ -z "$1" ] && show_usage
 
 # run command
-aboriginal $@
+indigen $@

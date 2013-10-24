@@ -1,12 +1,12 @@
 #!/bin/bash
-#@aboriginal stage [stage] [target]
+#@call stage [stage] [target]
 #@ - Sandbox a command or script
 [ -z $VER ] && echo "$0 is a helper file" && exit 1
 [ "$1" = "$BASH_SOURCE" ] && show_usage $BASH_SOURCE
 
 # set export variables
 export STAGE="$(basename $1)"
-export TARGET="$(basename "$(find $DIR_CONF -type d -iname "$2")")"
+export TARGET="$(basename "$(find $DIR_CONF -type d -iname "$2" 2>/dev/null)" 2>/dev/null)"
 
 local _STAGES=($(ls $DIR_STGS/$([ -n "$STAGE" ] && echo $STAGE* $DIR_STGS/[0-9][0-9]-$STAGE*) 2>/dev/null))
 local FILE_STAGE=$(basename "${_STAGES[0]}")
@@ -15,6 +15,6 @@ local FILE_STAGE=$(basename "${_STAGES[0]}")
 [ -z "$TARGET" ] && show_error "'$2' is not a valid target" $BASH_SOURCE
 
 show_header
-echo -e "  \E[1maboriginal stage $FILE_STAGE $TARGET\E[0m"
+echo -e "  \E[1m$CALL stage $FILE_STAGE $TARGET\E[0m"
 source_or_die "$DIR_STGS/$FILE_STAGE"
 echo " "

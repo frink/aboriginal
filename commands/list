@@ -1,12 +1,9 @@
 #!/bin/bash
-#@aboriginal list [type]
+#@call list [type]
 #@ - List shortcuts and commands
 [ -z $VER ] && echo "$0 is a helper file" && exit 1
 [ "$1" = "$BASH_SOURCE" ] && show_usage $BASH_SOURCE
-
-echo $1 is something
-
-[ -z "$(declare -F list_$1)" ] && show_header && echo "  list_$1 does not exist" && echo && exit
+[ -z "$(declare -F list_$1)" ] && show_error "list '$1' does not exist" $BASH_SOURCE
 
 show_header
 list_$1

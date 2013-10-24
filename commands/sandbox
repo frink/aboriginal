@@ -1,5 +1,5 @@
 #!/bin/bash
-#@aboriginal sandbox [stage]
+#@call sandbox [stage]
 #@ - Sandbox a command or script
 [ -z $VER ] && echo "$0 is a helper file" && exit 1
 [ "$1" = "$BASH_SOURCE" ] && show_usage $BASH_SOURCE
