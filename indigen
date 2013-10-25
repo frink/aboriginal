@@ -1,27 +1,43 @@
 #!/bin/bash
 
-# Define version
+# define version
 export VER="v1.6"
 export YEAR="2013"
 export CALL="$(basename "$0")"
+export SAVEPATH="$PATH"
 
-# Define directories
-export DIR_BASE=$(dirname $(readlink -f $0))
-export DIR_CONF=$DIR_BASE/config
-export DIR_LIBS=$DIR_BASE/library
-export DIR_CMDS=$DIR_BASE/commands
-export DIR_STGS=$DIR_BASE/stages
-export DIR_HELP=$DIR_BASE/help
-export DIR_TRGT=$PWD
-export DIR_CODE=$DIR_TRGT/sources
+PATH="$DIR_HOST:$PATH"
+
+# define base directories
+export DIR_BASE="$(dirname $(readlink -f $0))"
+export DIR_LIBS="$DIR_BASE/library"
+export DIR_CMDS="$DIR_BASE/commands"
+export DIR_HELP="$DIR_BASE/help"
+
+# define working directories
+export DIR_TRGT="$PWD"
+export DIR_STGS="$DIR_TRGT/stages"
+export DIR_CONF="$DIR_TRGT/config"
+export DIR_CODE="$DIR_TRGT/sources"
+export DIR_CHCK="$DIR_TRGT/tests"
+
+export DIR_HOST="$DIR_TRGT/host"
+export DIR_WORK="$DIR_TRGT/work"
+export DIR_TEMP="$DIR_TRGT/temp"
+
+# define basic settings
 export NO_HEADER=""
+export NO_CLEANUP=""
 
 #@function indigen [command]
 #@ - execute an indigen command
 indigen() {
   [ -n "$1" ] && [ ! -f "$DIR_CMDS/$1" ] && show_error "'$1' is not a valid command"
 
+  [ "$1" != "init" ] && check_init
   source_dir "$DIR_CMDS/$1" ${@:2}
+
+  PATH="$SAVEPATH"
 }
 
 #@function source_or_die [file or dir]
@@ -95,7 +111,7 @@ source_dir() {
 #@ - show header block with copywrite info
 show_header() {
   [ -z "$NO_HEADER" ] && echo -e "
-  \E[1mIndigen Build Systems $VER\E[0m - © $YEAR FRINKnet and Lemurs
+  \E[1mIndigen Build Systems $VER\E[0m - © $YEAR FRINKnet and Lemurs\E[0m
   \E[0mlemurs.mit-license.org - www.indigen.co - IRC: #indigen\E[0m
   \E[0mPrimitive Linux Emulations for Native Compilers on QEMU\E[0m
   "
@@ -111,6 +127,7 @@ show_header() {
 #@ - show usage block for command file
 show_usage() {
   show_header
+  check_init
   show_just_usage "$1"
 }
 
@@ -134,37 +151,73 @@ show_just_usage() {
     exit 0
   fi
 
-  echo "  List Usage and Shortcuts:"
-  echo
-  echo "    $CALL list commands"
-  echo
-  echo "  Help and Tutorials:"
-  echo
-  echo "    $CALL help"
-  echo
-  exit 0
+  echo -e "  \E[1mList Usage and Shortcuts:\E[0m\n"
+  echo -e "    $CALL list commands\n"
+  echo -e "  \E[1mHelp and Tutorials:\E[0m\n"
+  echo -e "    $CALL help\n"
+  exit
 }
 
 #@function show_docs [type] [files]
 #@ - show doc comments
 show_docs() {
-  find $3 -type f -exec sed -n -e "s/^#@$1/\n    $2/p" -e "s/^#@ - /    /p" {} \;
+  find $3 -type f -exec sed -n -e "s/^#@$1/\n    $(printf "\e[1m")$2/p" -e "s/^#@ - /    $(printf "\e[0m")/p" {} \;
+  printf "\e[0m"
+}
+
+#@function check_init
+#@ - check populate directories
+check_init() {
+  [ ! -d "$DIR_CONF" ] && show_init $DIR_CONF
+  [ ! -d "$DIR_STGS" ] && show_init $DIR_STGS
+  [ ! -d "$DIR_CODE" ] && show_init $DIR_CODE
+  [ ! -d "$DIR_CHCK" ] && show_init $DIR_CHCK
+}
+
+#@function show_init
+#@ - show initialization message
+show_init() {
+  echo "    Missing $1
+
+  To begin using $CALL you must first inintialize:
+
+    $CALL init
+  "
+  exit
 }
 
 #@function show_error [message] [command file]
 #@ - show error message
 show_error() {
+  [ -n "$OOPS" ] && exit 1
   show_header
-  echo "    $1"
-  echo
+  echo -e "    \e[31m$1\e[0m\n"
   show_just_usage $2
+
+  PATH="$SAVEPATH"
   exit 1
 }
 
-# load functions
+#@function show_oops
+#@ - show error message on death
+show_oops() {
+  show_error "OOPS!!! Unexpected Death"
+}
+
+trap show_death SIGUSR1
+TOPSHELL=$$
+
+#@function oops
+#@ - exit with oops message
+oops() {
+  kill -USR1 $TOPSHELL
+  exit 1
+}
+
+# load libraries
 source_quiet $DIR_LIBS
 
-# Check for arguments and show usage
+# check for arguments
 [ -z "$1" ] && show_usage
 
 # run command

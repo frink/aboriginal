@@ -4,27 +4,19 @@
 #@function list_list
 #@ - list of indigen shortcuts types
 list_list() {
-  echo "  List Types:"
-  echo
+  echo -e "  \E[1mList Types:\E[0m\n"
   declare -F|cut -d' ' -f3|sed -n 's/^list_/    /p'
-  echo
-  echo "  See Also:"
-  echo
-  echo "    $CALL help"
-  echo
+  echo -e "\n  \E[1mSee Also:\E[0m\n"
+  echo -e "    $CALL help\n"
 }
 
 #@function list_help
 #@ - list of indigen help topics
 list_help() {
-  echo "  Help Topics:"
-  echo
+  echo -e "  \E[1mHelp Topics:\E[0m\n"
   ls $DIR_HELP | xargs -I {} echo "    {}"
-  echo
-  echo "  See Also:"
-  echo
-  echo "    $CALL list"
-  echo
+  echo -e "\n  \E[1mSee Also:\E[0m\n"
+  echo -e "    $CALL list\n"
 }
 
 #@function list_config
@@ -45,7 +37,7 @@ list_build() {
 #@ - list of build targets
 list_targets() {
   echo -e "  \E[1mBuild Targets:\E[0m"
-  find $DIR_CONF -type d|sed -e "s/^.\{${#DIR_CONF}\}/   /" -e 's/\// /g'|sort
+  (cd $DIR_CONF; find . -maxdepth 1 -type d|sed -e 's/^\./   /' -e 's/\// /g')|sort
   echo
 }
 
@@ -84,9 +76,8 @@ list_functions() {
 #@function list_packages
 #@ - list packages
 list_packages() {
-  echo -e "  \E[1mBuild Packages:\E[0m"
-  echo
-  find $DIR_CONF -type f -exec basename {} \; |sort -u|grep -v build|sed -e 's/\.conf//' -e 's/^/    /'
+  echo -e "  \E[1mBuild Packages:\E[0m\n"
+  (cd $DIR_CONF; find ./ -type f -exec basename {} \;) |sort -u|grep -v build|sed -e 's/\.conf//' -e 's/^/    /'
   echo
 }
 

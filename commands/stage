@@ -6,7 +6,7 @@
 
 # set export variables
 export STAGE="$(basename $1)"
-export TARGET="$(basename "$(find $DIR_CONF -type d -iname "$2" 2>/dev/null)" 2>/dev/null)"
+export TARGET="$(basename "$(cd $DIR_CONF; find ./ -type d -iname "$2" 2>/dev/null)" 2>/dev/null)"
 
 local _STAGES=($(ls $DIR_STGS/$([ -n "$STAGE" ] && echo $STAGE* $DIR_STGS/[0-9][0-9]-$STAGE*) 2>/dev/null))
 local FILE_STAGE=$(basename "${_STAGES[0]}")

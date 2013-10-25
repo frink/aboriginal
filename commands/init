@@ -1,0 +1,26 @@
+#!/bin/bash
+#@call init [target]
+#@ - initialize project directory
+[ -z $VER ] && echo "$0 is a helper file" && exit 1
+
+show_header
+
+#@function copy_fill [source] [destination]
+copy_fill() {
+  local SRC="$(basename $1)"
+  local FROM="$DIR_BASE/$SRC"
+  local TRGT="$(dirname $1)"
+  [ ! -d "$FROM" ] && "    failed to copy $SRC" && return
+  echo -e "    populating $SRC" && cp -r $FROM $TRGT
+}
+
+echo -e "  Initializing $DIR_TRGT\n"
+
+copy_fill $DIR_CONF
+copy_fill $DIR_STGS
+copy_fill $DIR_CODE
+copy_fill $DIR_CHCK
+
+echo -e "\n  You can now begin using $CALL:\n"
+echo -e "    $CALL list commands\n"
+exit
