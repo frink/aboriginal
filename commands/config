@@ -1,8 +1,8 @@
 #!/bin/bash
-#@call config build
-#@ - Configure Indigen Build System
 #@call config [package]
 #@ - Configure a specific package
+#@call config build
+#@ - Configure Indigen Build System
 #@call config [target]
 #@ - Configure a specific target
 #@call config [target] [package]

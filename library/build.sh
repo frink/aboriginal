@@ -62,7 +62,7 @@ build_config() {
 
   source_quiet "$DIR_CONF/$CONFIG.conf"
   source_quiet "$DIR_CONF/$TARGET/$CONFIG.conf"
-  fork_worker $FUNCTION $CONFIG
+  worker_fork $FUNCTION $CONFIG
 
   while read x; do
     [ -n "$x" ] && build_config $1 "$x"

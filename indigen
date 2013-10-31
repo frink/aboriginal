@@ -1,33 +1,60 @@
 #!/bin/bash
 
-# define version
+# version number
 export VER="v1.6"
+
+# copyright year
 export YEAR="2013"
+
+# command line caller
 export CALL="$(basename "$0")"
+
+# original cal path
 export SAVEPATH="$PATH"
 
-PATH="$DIR_HOST:$PATH"
-
-# define base directories
+# base directory
 export DIR_BASE="$(dirname $(readlink -f $0))"
+
+# lirbrary directory
 export DIR_LIBS="$DIR_BASE/library"
+
+# commands directory
 export DIR_CMDS="$DIR_BASE/commands"
+
+# help directory
 export DIR_HELP="$DIR_BASE/help"
 
-# define working directories
+# working directories
 export DIR_TRGT="$PWD"
+
+# build stage directory
 export DIR_STGS="$DIR_TRGT/stages"
+
+# build config directory
 export DIR_CONF="$DIR_TRGT/config"
+
+# source code directory
 export DIR_CODE="$DIR_TRGT/sources"
+
+# testing code directory
 export DIR_CHCK="$DIR_TRGT/tests"
 
+# host system directory
 export DIR_HOST="$DIR_TRGT/host"
+
+# target system directory
 export DIR_WORK="$DIR_TRGT/work"
+
+# temporary usage directory
 export DIR_TEMP="$DIR_TRGT/temp"
 
 # define basic settings
 export NO_HEADER=""
 export NO_CLEANUP=""
+export TOOLCHAIN_PREFIX="${ARCH}-"
+
+# path includes host directory
+PATH="$DIR_HOST:$PATH"
 
 #@function indigen [command]
 #@ - execute an indigen command
@@ -35,6 +62,11 @@ indigen() {
   [ -n "$1" ] && [ ! -f "$DIR_CMDS/$1" ] && show_error "'$1' is not a valid command"
 
   [ "$1" != "init" ] && check_init
+
+  CONF_ERROR=$(find "$DIR_CMDS" "$DIR_STGS" "$DIR_CONF" -type f -iname "*.conf" | xargs -I {} bash -n {} 2>&1)
+
+  [ -n "$CONF_ERROR" ] && show_error "$CONF_ERROR"
+
   source_dir "$DIR_CMDS/$1" ${@:2}
 
   PATH="$SAVEPATH"
@@ -43,9 +75,9 @@ indigen() {
 #@function source_or_die [file or dir]
 #@ - source a file or directory or die if doesn't exist
 source_or_die() {
-  #echo "source_or_die $@"
-
   [ ! -d "$1" ] && [ ! -f "$1" ] && echo "$1 not found" && exit 404
+
+  #echo "source_or_die $@"
 
   source_dir "$1" ${@:2} | cat
 
@@ -204,15 +236,18 @@ show_oops() {
   show_error "OOPS!!! Unexpected Death"
 }
 
-trap show_death SIGUSR1
-TOPSHELL=$$
-
 #@function oops
 #@ - exit with oops message
 oops() {
   kill -USR1 $TOPSHELL
   exit 1
 }
+
+# id of this shell
+export TOPSHELL=$$
+
+# trap errors and report
+trap show_oops SIGUSR1
 
 # load libraries
 source_quiet $DIR_LIBS

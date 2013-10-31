@@ -11,6 +11,8 @@ export TARGET="$(basename "$(cd $DIR_CONF; find ./ -type d -iname "$2" 2>/dev/nu
 local _STAGES=($(ls $DIR_STGS/$([ -n "$STAGE" ] && echo $STAGE* $DIR_STGS/[0-9][0-9]-$STAGE*) 2>/dev/null))
 local FILE_STAGE=$(basename "${_STAGES[0]}")
 
+STAGE="${FILE_STAGE##[0-9][0-9]-}"
+
 [ -z "$FILE_STAGE" ] && show_error "'$1' is not a valid stage" $BASH_SOURCE
 [ -z "$TARGET" ] && show_error "'$2' is not a valid target" $BASH_SOURCE
 

@@ -1,9 +1,9 @@
 #!/bin/bash
 [ -z $VER ] && echo "$0 is a helper file" && exit 1
 
-#@function fork_worker [commands]
+#@function worker_fork [commands]
 #@ - Run a command background if FORK is set, in foreground otherwise
-fork_worker() {
+worker_fork() {
   [ -z "$VERBOSE" ] || echo "$*"
 
   if [ -z "$FORK" ]; then
@@ -14,9 +14,9 @@ fork_worker() {
 }
 
 
-#@function kill_worker [worker]
+#@function worker_kill [worker]
 #@ - Kill a process and all its decendants
-kill_worker() {
+worker_kill() {
   local KIDS=""
 
   while [ $# -ne 0 ]; do
