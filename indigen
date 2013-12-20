@@ -48,10 +48,11 @@ export DIR_WORK="$DIR_TRGT/work"
 # temporary usage directory
 export DIR_TEMP="$DIR_TRGT/temp"
 
-# define basic settings
+# boolean basic switches
 export NO_HEADER=""
 export NO_CLEANUP=""
-export TOOLCHAIN_PREFIX="${ARCH}-"
+export NO_STRIP=""
+export NO_SMOKETEST=""
 
 # path includes host directory
 PATH="$DIR_HOST:$PATH"
@@ -144,8 +145,8 @@ source_dir() {
 show_header() {
   [ -z "$NO_HEADER" ] && echo -e "
   \E[1mIndigen Build Systems $VER\E[0m - © $YEAR FRINKnet and Lemurs\E[0m
-  \E[0mlemurs.mit-license.org - www.indigen.co - IRC: #indigen\E[0m
   \E[0mPrimitive Linux Emulations for Native Compilers on QEMU\E[0m
+  \E[0mlemurs.mit-license.org - www.indigen.co - IRC: #indigen\E[0m
   "
 
   #Indigen Build System $VER Primitive Emulation for Native Compilers

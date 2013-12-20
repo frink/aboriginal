@@ -1,30 +1,7 @@
 #!/bin/bash
 [ -z $VER ] && echo "$0 is a helper file" && exit 1
 
-simplecross_target() {
-  # Build a simple cross compiler for the specified target.
-
-  # This simple compiler has no thread support, no libgcc_s.so, doesn't include
-  # uClibc++, and is dynamically linked against the host's shared libraries.
-
-  # Its stripped down nature makes it easy to build on an arbitrary host, and
-  # provides just enough capability to build a root filesystem, and to be used
-  # as a distcc accelerator from within that system.
-
-  # check_for_base_arch
-}
-
-# If this target has a base architecture that's already been built, use that.
-simplecross_target || exit 0
-
-# Build binutils, gcc, and ccwrap
-build_section binutils
-build_section gcc
-build_section ccwrap
-
-# Build C Library
-build_section linux-headers
-build_section uClibc
+execute_config build_package build simplecross
 
 # Cross compiler for $ARCH from http://aboriginal.impactlinux.com
 #
@@ -36,8 +13,8 @@ build_section uClibc
 #   make ARCH=${KARCH} CROSS_COMPILE=${ARCH}-
 
 # Strip the binaries
-if [ -z "$SKIP_STRIP" ]; then
-  cd "$STAGE_DIR"
+if [ -z "$NO_STRIP" ]; then
+  cd "$DIR_TEMP"
   for i in $(find bin -type f; find "$CROSS_TARGET" -type f); do
     strip "$i" 2> /dev/null
   done
@@ -47,13 +24,14 @@ fi
 # Build hello.c dynamic, then static, to verify header/library paths.
 echo "Sanity test: building Hello World."
 
-"${ARCH}-gcc" -Os "${SOURCES}/toys/hello.c" -o "$WORK"/hello &&
-"${ARCH}-gcc" -Os -static "${SOURCES}/toys/hello.c" -o "$WORK"/hello || dienow
+"$TARGET-gcc" -Os "$DIR_TEST/hello.c" -o "$DIR_TEST/$TARGET-hello" &&
+"$TARGET-gcc" -Os -static "$DIR_TEST/hello.c" -o "$DIR_TEST/$TARGET-hello" ||
+show_error "Test build failed"
 
 # Does the hello world we just built actually run?
-
-if [ ! -z "$CROSS_SMOKE_TEST" ]; then
-  more/cross-smoke-test.sh "$ARCH" || exit 1
+if [ -z "$NO_SMOKETEST" ]; then
+  more/cross-smoke-test.sh "$TARGET" ||
+  show_error "Smoke test failed"
 fi
 
 # Tar it up
