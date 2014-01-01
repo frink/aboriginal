@@ -4,12 +4,12 @@
 #@function worker_fork [commands]
 #@ - Run a command background if FORK is set, in foreground otherwise
 worker_fork() {
-  [ -z "$VERBOSE" ] || echo "$*"
+  [ -z "$VERBOSE" ] || echo "$@"
 
   if [ -z "$FORK" ]; then
-    eval "$*"
+    eval "$@"
   else
-    eval "$*" &
+    eval "$@" &
   fi
 }
 
