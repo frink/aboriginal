@@ -1,4 +1,4 @@
 #!/bin/bash
 [ -z $VER ] && echo "$0 is a helper file" && exit 1
 
-execute_config build download_packages
+execute_time download_packages

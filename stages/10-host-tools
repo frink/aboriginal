@@ -1,5 +1,5 @@
 #!/bin/bash
 [ -z $VER ] && echo "$0 is a helper file" && exit 1
 
-execute_config build build_package essentials
-execute_config build build_package hosttools
+execute_time build_package essentials
+execute_time build_package hosttools
