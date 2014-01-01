@@ -4,8 +4,6 @@
 #@function build_if_needed [package]
 #@ - build a package if needed
 build_if_needed() {
-  build_tools_path
-
   # If we need to build cross compiler, assume root filesystem is stale.
   if [ -z "$NO_REBUILD" ]; then
     remove_built "$1"
@@ -48,6 +46,8 @@ build_package() {
 
   [ -z "$build_type" ] && show_error "Build type is not specified for build_package"
 
+  [ -n "$PACKAGES" ] && build_tools_path $@
+
   in_array $build_type ${BUILD_TYPES[@]} || return 0
   env_prefix $build_type ${BUILD_ENV[@]}
 
@@ -59,7 +59,7 @@ build_package() {
 #@function build_tools_path
 #@ - create path for host tools
 build_tools_path() {
-  build_tools_links
+  build_tools_links $@
 
   export PATH="$DIR_HOST"
   local i=1
