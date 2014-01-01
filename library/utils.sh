@@ -22,13 +22,21 @@ execute_config() {
 
   source_quiet "$DIR_CONF/$CONFIG.conf"
   source_quiet "$DIR_CONF/$TARGET/$CONFIG.conf"
-  worker_fork $FUNCTION
+  $FUNCTION
+  wait 2>/dev/null
 
   for CONFIG in "${PACKAGES[@]}"; do
-    execute_config $CONFIG $FUNCTION
+    worker_fork execute_config $CONFIG $FUNCTION
   done
 
   return 0
+}
+
+#@function execute_config [function] [config] [params]
+#@ - execute function with specified config
+execute_time() {
+  time (execute_config build $@; wait)
+  echo
 }
 
 #@function in_array [needle] [haystack]
