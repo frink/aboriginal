@@ -144,9 +144,9 @@ source_dir() {
 #@ - show header block with copywrite info
 show_header() {
   [ -z "$NO_HEADER" ] && echo -e "
-  \E[1mIndigen Build Systems $VER\E[0m - © $YEAR FRINKnet and Lemurs\E[0m
-  \E[0mPrimitive Linux Emulations for Native Compilers on QEMU\E[0m
-  \E[0mlemurs.mit-license.org - www.indigen.co - IRC: #indigen\E[0m
+  \E[1mIndigen Build Systems $VER\E[0;33m - © $YEAR FRINKnet and Lemurs\E[0m
+  \E[33mPrimitive Linux Emulations for Native Compilers on QEMU\E[0m
+  \E[34mlemurs.mit-license.org - www.indigen.co - IRC: #indigen\E[0m
   "
 
   #Indigen Build System $VER Primitive Emulation for Native Compilers
