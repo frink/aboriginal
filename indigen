@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # version number
-export VER="v1.6"
+export VER="1.0.7"
 
 # copyright year
-export YEAR="2013"
+export YEAR="2014"
 
 # command line caller
 export CALL="$(basename "$0")"
@@ -12,40 +12,40 @@ export CALL="$(basename "$0")"
 # original cal path
 export SAVEPATH="$PATH"
 
-# base directory
+# indigen directory
 export DIR_BASE="$(dirname $(readlink -f $0))"
 
-# lirbrary directory
+# indigen lirbrary directory
 export DIR_LIBS="$DIR_BASE/library"
 
-# commands directory
+# indigen commands directory
 export DIR_CMDS="$DIR_BASE/commands"
 
-# help directory
+# indigen help directory
 export DIR_HELP="$DIR_BASE/help"
 
-# working directories
+# project directory
 export DIR_TRGT="$PWD"
 
-# build stage directory
+# project stage directory
 export DIR_STGS="$DIR_TRGT/stages"
 
-# build config directory
+# project config directory
 export DIR_CONF="$DIR_TRGT/config"
 
-# source code directory
+# project source code directory
 export DIR_CODE="$DIR_TRGT/sources"
 
-# testing code directory
-export DIR_CHCK="$DIR_TRGT/tests"
+# project test code directory
+export DIR_TEST="$DIR_TRGT/tests"
 
-# host system directory
+# project host tools directory
 export DIR_HOST="$DIR_TRGT/host"
 
-# target system directory
+# project target system directory
 export DIR_WORK="$DIR_TRGT/work"
 
-# temporary usage directory
+# project temporary directory
 export DIR_TEMP="$DIR_TRGT/temp"
 
 # boolean basic switches
@@ -144,7 +144,7 @@ source_dir() {
 #@ - show header block with copywrite info
 show_header() {
   [ -z "$NO_HEADER" ] && echo -e "
-  \E[1mIndigen Build Systems $VER\E[0;33m - © $YEAR FRINKnet and Lemurs\E[0m
+  \E[1mIndigen Build Systems v$VER\E[0;33m - © $YEAR FRINKnet & Lemurs\E[0m
   \E[33mPrimitive Linux Emulations for Native Compilers on QEMU\E[0m
   \E[34mlemurs.mit-license.org - www.indigen.co - IRC: #indigen\E[0m
   "
@@ -204,7 +204,7 @@ check_init() {
   [ ! -d "$DIR_CONF" ] && show_init $DIR_CONF
   [ ! -d "$DIR_STGS" ] && show_init $DIR_STGS
   [ ! -d "$DIR_CODE" ] && show_init $DIR_CODE
-  [ ! -d "$DIR_CHCK" ] && show_init $DIR_CHCK
+  [ ! -d "$DIR_TEST" ] && show_init $DIR_TEST
 }
 
 #@function show_init
@@ -228,7 +228,7 @@ show_error() {
   show_just_usage $2
 
   PATH="$SAVEPATH"
-  exit 1
+  oops
 }
 
 #@function show_oops
