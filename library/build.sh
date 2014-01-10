@@ -6,52 +6,75 @@
 build_if_needed() {
   # If we need to build cross compiler, assume root filesystem is stale.
   if [ -z "$NO_REBUILD" ]; then
-    remove_built "$1"
-  elif [ -f "$DIR_MAKE/$1-$TARGET" ]; then
+    build_clean "$1" "$2"
+  elif [ -f "$DIR_TEMP/$2-$1" ]; then
     return 1
   fi
 
-  # do build stuff
+  build_setup "$1" "$2"
 
   return 0
 }
 
-#@function build_stage [target]
-#@ - set build target to
-build_stage() {
-  export STAGE="$1"
-  export STAGE_FILE="$DIR_STGS/$STAGE"
+#@function build_test_static
+#@ - test compiler sanity
+build_test_static() {
+  $CC "$DIR_TEST/check-compiler.c" --static -o "$DIR_TEMP/compiled-static" && local COMPILES=$("$DIR_TEMP/compiled-static") && rm "$DIR_TEMP/compiled-static"
 
-  [ -f "$STAGE_FILE" ] && source_limit "$STAGE_FILE" && exit
 
-  local STAGES=($DIR_STGS/[0-9][0-9]-$STAGE)
-
-  for STAGE_FILE in $DIR_STGS; do
-    source_limit $STAGE_FILE
-  done
+  if [ "$COMPILES$?" != "Compiles0" ]; then
+    show_error "Your host toolchain does not allow static linking. Install support or add BUILD_STATIC=false to your config files."
+  fi
 }
 
-#@function remove_built [package]
+#@function build_setup [package]
+#@ - setup a build for the specified package
+build_setup() {
+  TARGET=$1
+  CONFIG=$2
+  BUILD_DIR="$DIR_TEMP/$CONFIG-$TARGET"
+
+  # make directory
+  [ ! -d "$BUILD_DIR" ] && mkdir "$BUILD_DIR"
+
+  if [ "$BUILD_STATIC" = "false" ] || in_array "$BUILD_TYPE" "hosttools" "essentials"; then
+    export BUILD_STATIC=""
+  else
+    export BUILD_STATIC="--static"
+  fi
+
+  OLD_CPUS=$CPUS
+  OLD_NO_CLEAN=$NO_CLEANUP
+  in_array $CONFIG $DEBUG_PACKAGES && CPUS=1 && NO_CLEANUP=1
+
+  echo  "  "$CC $BUILD_STATIC $CONFIG $TARGET $BUILD_TYPE $CPUS $NO_CLEANUP
+
+  CPUS=$OLD_CPUS
+  NO_CLEANUP=$OLD_NO_CLEANUP
+}
+
+#@function build_clean [packages]
 #@ - remove built packages
-remove_built() {
-  for package in "$@"; do
-    PATH="$SAVEPATH" rm -f "$DIR_MAKE/$package-$TARGET.tar.bz2"
+build_clean() {
+  for package in ${@:2}; do
+    rm -f "$DIR_TEMP/$package-$1*"
   done
 }
 
 #@function build_package [build_type]
 #@ - build a given package
 build_package() {
-  local build_type="$1"
+  export BUILD_TYPE="$1"
 
-  [ -z "$build_type" ] && show_error "Build type is not specified for build_package"
-
+  [ -z "$BUILD_TYPE" ] && show_error "Build type is not specified for build_package"
   [ -n "$PACKAGES" ] && build_tools_path $@
+  [ "$BUILD_STATIC" != "false" ]
+  build_test_static
 
-  in_array $build_type ${BUILD_TYPES[@]} || return 0
-  env_prefix $build_type ${BUILD_ENV[@]}
+  in_array $BUILD_TYPE ${BUILD_TYPES[@]} || return 0
+  env_prefix $BUILD_TYPE ${BUILD_ENV[@]}
 
-  [ -z "$FORK" ] && echo -ne "  \E[33mBuilding $build_type version of $CONFIG\E[0m\n"
+  [ -z "$FORK" ] && echo -ne "  \E[33mBuilding $BUILD_TYPE version of $CONFIG\E[0m\n"
 
   build_if_needed $TARGET $CONFIG
 }
@@ -68,6 +91,8 @@ build_tools_path() {
     PATH="$PATH:$DIR_HOST/$i"
     i=$[$i+1]
   done
+
+  PATH="$PATH:$SAVEPATH"
 }
 
 #@function build_tools_path
