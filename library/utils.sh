@@ -45,11 +45,12 @@ in_array() {
   local i
 
   for i in "${@:2}"; do
-    [[ "$i" == "$1" ]] && return 0
+    [ "$i" = "$1" ] && return 0
   done
 
   return 1
 }
+
 #@function env_prefix [prefix] [variables]
 #@ - setup environment variables from prefix
 env_prefix() {
